@@ -13,7 +13,6 @@ class Scanner:
 
     def scan_token(self):
         char = self.consume()
-        # pdb.set_trace()
         if char == TokenTypes.LEFT_PAREN.value:
             self.add_token(TokenTypes.LEFT_PAREN)
 
@@ -88,13 +87,14 @@ class Scanner:
         else:
             Lox.error(self.line, "Unknown token %s" % char)
 
-    """ Consumes a series of digits
-        e.g 2345b => consumes 2345
-        e.g 123.4 => consumes 123
-    """
 
     def consume_number(self):
-        while self.has_GREATER():
+        """ Consumes a series of digits
+            e.g 2345b = > consumes 2345
+            e.g 123.4 = > consumes 123
+        """
+
+        while self.has_next():
             # if is number, eat it
             if is_digit(self.peek()):
                 self.consume()
@@ -108,13 +108,13 @@ class Scanner:
     def string(self):
         start = self.curr_idx
         start_line = self.line
-        while self.has_GREATER() and not is_quotemark(self.peek()):
+        while self.has_next() and not is_quotemark(self.peek()):
             char = self.consume()
             if is_nextline(char):
                 self.next_line()
 
         # did not find end of string
-        if not self.has_GREATER():
+        if not self.has_next():
             Lox.error(self.line, "Unterminated string")
 
         # consume closing quote
@@ -124,12 +124,12 @@ class Scanner:
         substr = self.src[start + 1:end]
         return substr, substr, start_line
 
-    """ Consumes and returns a number
-        can be int or float
-        e.g. 123, 1.11
-    """
 
     def number(self):
+        """ Consumes and returns a number
+            can be int or float
+            e.g. 123, 1.11
+        """
         start = self.curr_idx
 
         # consume number chunk
@@ -151,7 +151,7 @@ class Scanner:
         self.tokens.append(Token(ttype, value, literal, line))
 
     def consume(self):
-        if not self.has_GREATER():
+        if not self.has_next():
             return '\0'
         self.curr_idx = self.curr_idx + 1
         return self.src[self.curr_idx]
@@ -161,17 +161,17 @@ class Scanner:
             return '\0'
         return self.src[self.curr_idx + ahead]
 
-    """Only consume if matches c
-    """
 
     def match(self, c):
+        """Only consume if matches c
+        """
         if c == self.peek():
             return self.consume()
         return False
 
     def consume_line(self):
         line = ''
-        while(self.has_GREATER()):
+        while(self.has_next()):
             char = self.consume()
             line = line + char
             if is_nextline(char):
@@ -182,9 +182,9 @@ class Scanner:
     def next_line(self):
         self.line = self.line + 1
 
-    def has_GREATER(self):
+    def has_next(self):
         return self.curr_idx < len(self.src) - 1
 
     def scan(self):
-        while(self.has_GREATER()):
+        while(self.has_next()):
             self.scan_token()
