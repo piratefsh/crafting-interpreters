@@ -75,14 +75,17 @@ class Scanner:
             else:
                 self.add_token(TokenTypes.SLASH)
 
+        # numbers
         elif is_digit(char):
             text, literal = self.number()
             self.add_token(TokenTypes.NUMBER, text, literal)
 
+        # strings
         elif is_quotemark(char):
             text, literal, start_line = self.string()
             self.add_token(TokenTypes.STRING, text, literal, start_line)
 
+        # identifiers and keywords
         elif is_alphanumeric(char):
             identifier = self.identifier()
             keyword_type = is_keyword(identifier)
@@ -95,6 +98,7 @@ class Scanner:
         elif is_nextline(char):
             self.line = self.line + 1
 
+        # ignore whitespace
         elif is_whitespace(char):
             pass
         else:
