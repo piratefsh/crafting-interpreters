@@ -108,6 +108,11 @@ def"''').tokens == [
     assert(scan('==').tokens == [
         Token(type=TokenTypes.EQUAL_EQUAL, lexeme='==', literal=None, line_number=0)])
 
+    assert(scan('var').tokens == [
+        Token(type=TokenTypes.VAR, lexeme='var', literal=None, line_number=0)])
+    assert(scan('varietal').tokens == [
+        Token(type=TokenTypes.IDENTIFIER, lexeme='varietal', literal=None, line_number=0)])
+
     print('tests pass')
 
     # scan("""

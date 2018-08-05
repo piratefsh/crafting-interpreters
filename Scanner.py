@@ -23,6 +23,13 @@ def is_whitespace(c):
 def is_quotemark(c):
     return c == '"'
 
+def is_alpha(c):
+    return c >= 'a' and c <= 'z' or \
+        c >= 'A' and c <= 'Z' or \
+        c == '_'
+
+def is_alphanumeric(c):
+    return is_alpha(c) or is_digit(c)
 
 class Scanner:
     def __init__(self, src):
@@ -96,6 +103,10 @@ class Scanner:
             text, literal, start_line = self.string()
             self.add_token(TokenTypes.STRING, text, literal, start_line)
 
+        elif is_alphanumeric(char):
+            identifier = self.identifier()
+            self.add_token(TokenTypes.IDENTIFIER, identifier)
+
         elif is_nextline(char):
             self.line = self.line + 1
 
@@ -118,6 +129,8 @@ class Scanner:
             else:
                 break
 
+    def identifier(char):
+        pass
     def string(self):
         start = self.curr_idx
         start_line = self.line
