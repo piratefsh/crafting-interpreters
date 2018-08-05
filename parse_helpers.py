@@ -1,4 +1,6 @@
 from TokenTypes import TokenTypes
+from TokenKeywords import TokenKeywords
+
 
 def is_digit(c):
     return c >= '0' and c <= '9'
@@ -25,5 +27,10 @@ def is_alpha(c):
         c >= 'A' and c <= 'Z' or \
         c == '_'
 
+
 def is_alphanumeric(c):
     return is_alpha(c) or is_digit(c)
+
+
+def is_keyword(word):
+    return TokenKeywords[word] if word in TokenKeywords else False

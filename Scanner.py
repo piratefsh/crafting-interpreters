@@ -2,7 +2,15 @@ from TokenTypes import TokenTypes
 from Token import Token
 from Lox import Lox
 import pdb
-from parse_helpers import is_digit, is_dot, is_nextline, is_whitespace, is_quotemark, is_alpha, is_alphanumeric
+from parse_helpers import is_digit, \
+    is_dot, \
+    is_nextline, \
+    is_whitespace, \
+    is_quotemark, \
+    is_alpha, \
+    is_alphanumeric, \
+    is_keyword
+
 
 class Scanner:
     def __init__(self, src):
@@ -77,7 +85,12 @@ class Scanner:
 
         elif is_alphanumeric(char):
             identifier = self.identifier()
-            self.add_token(TokenTypes.IDENTIFIER, identifier)
+            keyword_type = is_keyword(identifier)
+            if keyword_type:
+                literal = self.keyword_literal(keyword_type, identifier)
+                self.add_token(keyword_type, identifier, literal)
+            else:
+                self.add_token(TokenTypes.IDENTIFIER, identifier)
 
         elif is_nextline(char):
             self.line = self.line + 1
@@ -86,7 +99,6 @@ class Scanner:
             pass
         else:
             Lox.error(self.line, "Unknown token %s" % char)
-
 
     def consume_number(self):
         """ Consumes a series of digits
@@ -101,6 +113,16 @@ class Scanner:
             # otherwise, consider end of number
             else:
                 break
+
+    def keyword_literal(self, ttype, identifier):
+        if(identifier == 'true'):
+            return True
+        elif(identifier == 'false'):
+            return False
+        elif(identifier == 'nil'):
+            return None
+
+        return None
 
     def identifier(self):
         start = self.curr_idx
@@ -130,7 +152,6 @@ class Scanner:
         end = self.curr_idx
         substr = self.src[start + 1:end]
         return substr, substr, start_line
-
 
     def number(self):
         """ Consumes and returns a number
@@ -169,7 +190,6 @@ class Scanner:
         if self.curr_idx + ahead > len(self.src) - 1:
             return '\0'
         return self.src[self.curr_idx + ahead]
-
 
     def match(self, c):
         """Only consume if matches c
