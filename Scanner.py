@@ -64,6 +64,22 @@ class Scanner:
         elif char == TokenTypes.STAR.value:
             self.add_token(TokenTypes.STAR)
 
+        elif char == TokenTypes.BANG.value:
+            self.add_token(TokenTypes.BANG_EQUAL if self.match(
+                TokenTypes.EQUAL.value) else TokenTypes.BANG)
+
+        elif char == TokenTypes.LESS.value:
+            self.add_token(TokenTypes.LESS_EQUAL if self.match(
+                TokenTypes.EQUAL.value) else TokenTypes.LESS)
+
+        elif char == TokenTypes.GREATER.value:
+            self.add_token(TokenTypes.GREATER_EQUAL if self.match(
+                TokenTypes.EQUAL.value) else TokenTypes.GREATER)
+
+        elif char == TokenTypes.EQUAL.value:
+            self.add_token(TokenTypes.EQUAL_EQUAL if self.match(
+                TokenTypes.EQUAL.value) else TokenTypes.EQUAL)
+
         elif char == TokenTypes.SLASH.value:
             # if is comment
             if self.peek() == TokenTypes.SLASH.value:
@@ -77,8 +93,8 @@ class Scanner:
             self.add_token(TokenTypes.NUMBER, text, literal)
 
         elif is_quotemark(char):
-            text, literal = self.string()
-            self.add_token(TokenTypes.STRING, text, literal)
+            text, literal, start_line = self.string()
+            self.add_token(TokenTypes.STRING, text, literal, start_line)
 
         elif is_nextline(char):
             self.line = self.line + 1
@@ -94,7 +110,7 @@ class Scanner:
     """
 
     def consume_number(self):
-        while self.has_more():
+        while self.has_GREATER():
             # if is number, eat it
             if is_digit(self.peek()):
                 self.consume()
@@ -104,21 +120,22 @@ class Scanner:
 
     def string(self):
         start = self.curr_idx
-        while self.has_more() and not is_quotemark(self.peek()):
+        start_line = self.line
+        while self.has_GREATER() and not is_quotemark(self.peek()):
             char = self.consume()
             if is_nextline(char):
                 self.next_line()
 
         # did not find end of string
-        if not self.has_more():
+        if not self.has_GREATER():
             Lox.error(self.line, "Unterminated string")
 
         # consume closing quote
         self.consume()
 
         end = self.curr_idx
-        substr = self.src[start + 1 :end]
-        return substr, substr
+        substr = self.src[start + 1:end]
+        return substr, substr, start_line
 
     """ Consumes and returns a number
         can be int or float
@@ -140,13 +157,14 @@ class Scanner:
         substr = self.src[start:end + 1]
         return substr, float(substr)
 
-    def add_token(self, ttype, tvalue=None, literal=None):
+    def add_token(self, ttype, tvalue=None, literal=None, line=None):
         value = tvalue if tvalue is not None else ttype.value
 
-        self.tokens.append(Token(ttype, value, literal, self.line))
+        line = self.line if line is None else line
+        self.tokens.append(Token(ttype, value, literal, line))
 
     def consume(self):
-        if not self.has_more():
+        if not self.has_GREATER():
             return '\0'
         self.curr_idx = self.curr_idx + 1
         return self.src[self.curr_idx]
@@ -156,9 +174,17 @@ class Scanner:
             return '\0'
         return self.src[self.curr_idx + ahead]
 
+    """Only consume if matches c
+    """
+
+    def match(self, c):
+        if c == self.peek():
+            return self.consume()
+        return False
+
     def consume_line(self):
         line = ''
-        while(self.has_more()):
+        while(self.has_GREATER()):
             char = self.consume()
             line = line + char
             if is_nextline(char):
@@ -166,12 +192,12 @@ class Scanner:
 
         return line
 
-    def next_line():
+    def next_line(self):
         self.line = self.line + 1
 
-    def has_more(self):
+    def has_GREATER(self):
         return self.curr_idx < len(self.src) - 1
 
     def scan(self):
-        while(self.has_more()):
+        while(self.has_GREATER()):
             self.scan_token()
