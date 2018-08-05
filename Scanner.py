@@ -4,6 +4,22 @@ from Lox import Lox
 import pdb
 
 
+def is_digit(c):
+    return c >= '0' and c <= '9'
+
+
+def is_dot(c):
+    return c == TokenTypes.DOT.value
+
+
+def is_nextline(c):
+    return c == '\n'
+
+
+def is_whitespace(c):
+    return c == '\t' or c == ' ' or c == '\r'
+
+
 class Scanner:
     def __init__(self, src):
         self.src = src
@@ -51,43 +67,78 @@ class Scanner:
                 line = self.consume_line()
             else:
                 self.add_token(TokenTypes.SLASH)
-        elif self.is_nextline(char):
+
+        elif is_digit(char):
+            text, literal = self.number()
+            self.add_token(TokenTypes.NUMBER, text, literal)
+
+        elif is_nextline(char):
             self.line = self.line + 1
-        elif self.is_whitespace(char):
+
+        elif is_whitespace(char):
             pass
         else:
             Lox.error(self.line, "Unknown token %s" % char)
 
-    def add_token(self, ttype, tvalue=None):
-        # TODO: literal
-        literal = None
+    """ Consumes a series of digits
+        e.g 2345b => consumes 2345
+        e.g 123.4 => consumes 123
+    """
 
+    def consume_number(self):
+        while self.has_more():
+            # if is number, eat it
+            if is_digit(self.peek()):
+                self.consume()
+            # otherwise, consider end of number
+            else:
+                break
+
+    """ Consumes and returns a number
+        can be int or float
+        e.g. 123, 1.11
+    """
+
+    def number(self):
+        start = self.curr_idx
+
+        # consume number chunk
+        self.consume_number()
+
+        # if is dot and has number after it
+        if is_dot(self.peek()) and is_digit(self.peek(2)):
+            self.consume()
+            self.consume_number()
+
+        end = self.curr_idx
+        substr = self.src[start:end + 1]
+        return substr, float(substr)
+
+    def add_token(self, ttype, tvalue=None, literal=None):
         value = tvalue if tvalue is not None else ttype.value
 
         self.tokens.append(Token(ttype, value, literal, self.line))
 
     def consume(self):
+        if not self.has_more():
+            return '\0'
         self.curr_idx = self.curr_idx + 1
         return self.src[self.curr_idx]
 
-    def peek(self):
-        return self.src[self.curr_idx + 1]
+    def peek(self, ahead=1):
+        if self.curr_idx + ahead > len(self.src) - 1:
+            return '\0'
+        return self.src[self.curr_idx + ahead]
 
     def consume_line(self):
         line = ''
         while(self.has_more()):
             char = self.consume()
             line = line + char
-            if self.is_nextline(char):
+            if is_nextline(char):
                 return line
 
         return line
-
-    def is_nextline(self, c):
-        return c == '\n'
-
-    def is_whitespace(self, c):
-        return c == '\t' or c == ' ' or c == '\r'
 
     def has_more(self):
         return self.curr_idx < len(self.src) - 1
