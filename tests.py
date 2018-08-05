@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 from Scanner import Scanner
 from TokenTypes import TokenTypes
 from Token import Token
@@ -20,8 +22,19 @@ def run():
 
     assert(scan("{}").tokens == [Token(type=TokenTypes.LEFT_BRACE, lexeme='{', literal=None, line_number=0),
                         Token(type=TokenTypes.RIGHT_BRACE, lexeme='}', literal=None, line_number=0)])
+    assert(scan("""
+      // hi i am comment
+      ()
+      """).tokens == [Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=1),
+                        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=1)])
+    assert(scan(" * ").tokens == [
+      Token(type=TokenTypes.STAR, lexeme='*', literal=None, line_number=0)]) 
+   
+    assert(scan("/ * ").tokens == [
+      Token(type=TokenTypes.SLASH, lexeme='/', literal=None, line_number=0),
+      Token(type=TokenTypes.STAR, lexeme='*', literal=None, line_number=0)])
 
-    assert(scan(", . : - + / *").tokens == [
+    assert(scan(", . : - + / * ").tokens == [
       Token(type=TokenTypes.COMMA, lexeme=',', literal=None, line_number=0),
       Token(type=TokenTypes.DOT, lexeme='.', literal=None, line_number=0),
       Token(type=TokenTypes.SEMICOLON, lexeme=':', literal=None, line_number=0),
@@ -33,11 +46,12 @@ def run():
 
     print('tests pass')
 
-    scan("""
+    # scan("""
 
-      ~
-    """)
+    #   ~
+    # """)
 
 
-def assert_obj_equal(obj1, obj2):
-    assert(obj1.__dict__ == obj2.__dict__)
+if __name__ == '__main__':
+    run()
+

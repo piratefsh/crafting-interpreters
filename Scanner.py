@@ -13,28 +13,44 @@ class Scanner:
 
     def scan_token(self):
         char = self.consume()
+        # pdb.set_trace()
         if char == TokenTypes.LEFT_PAREN.value:
             self.add_token(TokenTypes.LEFT_PAREN)
+
         elif char == TokenTypes.RIGHT_PAREN.value:
             self.add_token(TokenTypes.RIGHT_PAREN)
+
         elif char == TokenTypes.LEFT_BRACE.value:
             self.add_token(TokenTypes.LEFT_BRACE)
+
         elif char == TokenTypes.RIGHT_BRACE.value:
             self.add_token(TokenTypes.RIGHT_BRACE)
+
         elif char == TokenTypes.COMMA.value:
             self.add_token(TokenTypes.COMMA)
+
         elif char == TokenTypes.DOT.value:
             self.add_token(TokenTypes.DOT)
+
         elif char == TokenTypes.MINUS.value:
             self.add_token(TokenTypes.MINUS)
+
         elif char == TokenTypes.PLUS.value:
             self.add_token(TokenTypes.PLUS)
+
         elif char == TokenTypes.SEMICOLON.value:
             self.add_token(TokenTypes.SEMICOLON)
+
         elif char == TokenTypes.STAR.value:
             self.add_token(TokenTypes.STAR)
+
         elif char == TokenTypes.SLASH.value:
-            self.add_token(TokenTypes.SLASH)
+            # if is comment
+            if self.peek() == TokenTypes.SLASH.value:
+                # consume comment
+                line = self.consume_line()
+            else:
+                self.add_token(TokenTypes.SLASH)
         elif self.is_nextline(char):
             self.line = self.line + 1
         elif self.is_whitespace(char):
@@ -54,12 +70,28 @@ class Scanner:
         self.curr_idx = self.curr_idx + 1
         return self.src[self.curr_idx]
 
+    def peek(self):
+        return self.src[self.curr_idx + 1]
+
+    def consume_line(self):
+        line = ''
+        while(self.has_more()):
+            char = self.consume()
+            line = line + char
+            if self.is_nextline(char):
+                return line
+
+        return line
+
     def is_nextline(self, c):
         return c == '\n'
 
     def is_whitespace(self, c):
         return c == '\t' or c == ' ' or c == '\r'
 
+    def has_more(self):
+        return self.curr_idx < len(self.src) - 1
+
     def scan(self):
-        while(self.curr_idx < len(self.src) - 1):
+        while(self.has_more()):
             self.scan_token()
