@@ -4,10 +4,11 @@ from Scanner import Scanner
 from TokenTypes import TokenTypes
 from Token import Token
 from os import environ
-
+from Lox import Lox
 
 def scan(src):
-    s = Scanner(src)
+    l = Lox()
+    s = Scanner(src, l)
     s.scan()
     return s
 
@@ -111,7 +112,6 @@ def"''').tokens == [
     assert(scan('==').tokens == [
         Token(type=TokenTypes.EQUAL_EQUAL, lexeme='==', literal=None, line_number=0)])
 
-    b()
     assert(scan('varietal').tokens == [
         Token(type=TokenTypes.IDENTIFIER, lexeme='varietal', literal=None, line_number=0)])
     assert(scan('var').tokens == [
@@ -123,6 +123,17 @@ def"''').tokens == [
     assert(scan('false').tokens == [
         Token(type=TokenTypes.FALSE, lexeme='false', literal=False, line_number=0)])
 
+    assert(scan('fun x(a){return a}').tokens == [
+      Token(type=TokenTypes.FUN, lexeme='fun', literal=None, line_number=0), 
+      Token(type=TokenTypes.IDENTIFIER, lexeme='x', literal=None, line_number=0), 
+      Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0), 
+      Token(type=TokenTypes.IDENTIFIER, lexeme='a', literal=None, line_number=0), 
+      Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0), 
+      Token(type=TokenTypes.LEFT_BRACE, lexeme='{', literal=None, line_number=0), 
+      Token(type=TokenTypes.RETURN, lexeme='return', literal=None, line_number=0), 
+      Token(type=TokenTypes.IDENTIFIER, lexeme='a', literal=None, line_number=0), 
+      Token(type=TokenTypes.RIGHT_BRACE, lexeme='}', literal=None, line_number=0)
+    ])
     print('tests pass')
 
     # scan("""

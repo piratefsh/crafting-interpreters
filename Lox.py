@@ -1,6 +1,6 @@
-from os import path
 import sys
-
+from os import path
+from Scanner import Scanner
 
 class Lox():
     def __init__(self):
@@ -8,6 +8,9 @@ class Lox():
 
     def run(self, src):
         print("echo %s" % src)
+        sc = Scanner(src, self)
+        sc.scan()
+        print("parsed %s" % sc.tokens)
         if self.had_error:
             exit(1)
 
@@ -17,12 +20,12 @@ class Lox():
             Lox.error(message="File does not exist: %s" % filename)
         with open(filename, "r") as f:
             src = f.read()
-        run(src)
+        self.run(src)
 
     def run_repl(self):
         while True:
             line = input('> ')
-            run(line)
+            self.run(line)
             self.had_error = False
         pass
 

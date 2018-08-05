@@ -1,6 +1,5 @@
 from TokenTypes import TokenTypes
 from Token import Token
-from Lox import Lox
 import pdb
 from parse_helpers import is_digit, \
     is_dot, \
@@ -13,11 +12,14 @@ from parse_helpers import is_digit, \
 
 
 class Scanner:
-    def __init__(self, src):
+    def __init__(self, src, lox_instance):
         self.src = src
         self.tokens = []
         self.curr_idx = -1
         self.line = 0
+
+        # for logging errors
+        self.lox = lox_instance 
 
     def scan_token(self):
         char = self.consume()
@@ -102,7 +104,7 @@ class Scanner:
         elif is_whitespace(char):
             pass
         else:
-            Lox.error(self.line, "Unknown token %s" % char)
+            self.lox_instance.error(self.line, "Unknown token %s" % char)
 
     def consume_number(self):
         """ Consumes a series of digits
