@@ -40,7 +40,7 @@ class Scanner:
         elif self.is_whitespace(char):
             pass
         else:
-            Lox.error(message="Unknown token %s" % char)
+            Lox.error(self.line, "Unknown token %s" % char)
 
     def add_token(self, ttype, tvalue=None):
         # TODO: literal

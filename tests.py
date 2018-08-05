@@ -33,6 +33,11 @@ def run():
 
     print('tests pass')
 
+    scan("""
+
+      ~
+    """)
+
 
 def assert_obj_equal(obj1, obj2):
     assert(obj1.__dict__ == obj2.__dict__)
