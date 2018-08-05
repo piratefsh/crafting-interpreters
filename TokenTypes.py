@@ -11,7 +11,7 @@ class TokenTypes(Enum):
     DOT = "."
     MINUS = "-"
     PLUS = "+"
-    SEMICOLON = ":"
+    SEMICOLON = ";"
     SLASH = "/"
     STAR = "*"
 

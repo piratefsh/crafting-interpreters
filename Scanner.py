@@ -104,7 +104,7 @@ class Scanner:
         elif is_whitespace(char):
             pass
         else:
-            self.lox_instance.error(self.line, "Unknown token %s" % char)
+            self.lox.error(self.line, "Unknown token %s" % char)
 
     def consume_number(self):
         """ Consumes a series of digits
