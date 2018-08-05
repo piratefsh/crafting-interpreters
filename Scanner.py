@@ -2,34 +2,7 @@ from TokenTypes import TokenTypes
 from Token import Token
 from Lox import Lox
 import pdb
-
-
-def is_digit(c):
-    return c >= '0' and c <= '9'
-
-
-def is_dot(c):
-    return c == TokenTypes.DOT.value
-
-
-def is_nextline(c):
-    return c == '\n'
-
-
-def is_whitespace(c):
-    return c == '\t' or c == ' ' or c == '\r'
-
-
-def is_quotemark(c):
-    return c == '"'
-
-def is_alpha(c):
-    return c >= 'a' and c <= 'z' or \
-        c >= 'A' and c <= 'Z' or \
-        c == '_'
-
-def is_alphanumeric(c):
-    return is_alpha(c) or is_digit(c)
+from parse_helpers import is_digit, is_dot, is_nextline, is_whitespace, is_quotemark, is_alpha, is_alphanumeric
 
 class Scanner:
     def __init__(self, src):
@@ -131,6 +104,7 @@ class Scanner:
 
     def identifier(char):
         pass
+
     def string(self):
         start = self.curr_idx
         start_line = self.line
