@@ -80,6 +80,13 @@ def run():
         Token(type=TokenTypes.DOT, lexeme='.', literal=None, line_number=0),
         ])
 
+    b()
+    assert(scan('"a"').tokens == [
+        Token(type=TokenTypes.STRING, lexeme='a', literal='a', line_number=0)])
+
+    assert(scan('"abc"').tokens == [
+        Token(type=TokenTypes.STRING, lexeme='abc', literal='abc', line_number=0)])
+
     print('tests pass')
 
     # scan("""

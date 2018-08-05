@@ -20,6 +20,10 @@ def is_whitespace(c):
     return c == '\t' or c == ' ' or c == '\r'
 
 
+def is_quotemark(c):
+    return c == '"'
+
+
 class Scanner:
     def __init__(self, src):
         self.src = src
@@ -72,6 +76,10 @@ class Scanner:
             text, literal = self.number()
             self.add_token(TokenTypes.NUMBER, text, literal)
 
+        elif is_quotemark(char):
+            text, literal = self.string()
+            self.add_token(TokenTypes.STRING, text, literal)
+
         elif is_nextline(char):
             self.line = self.line + 1
 
@@ -93,6 +101,24 @@ class Scanner:
             # otherwise, consider end of number
             else:
                 break
+
+    def string(self):
+        start = self.curr_idx
+        while self.has_more() and not is_quotemark(self.peek()):
+            char = self.consume()
+            if is_nextline(char):
+                self.next_line()
+
+        # did not find end of string
+        if not self.has_more():
+            Lox.error(self.line, "Unterminated string")
+
+        # consume closing quote
+        self.consume()
+
+        end = self.curr_idx
+        substr = self.src[start + 1 :end]
+        return substr, substr
 
     """ Consumes and returns a number
         can be int or float
@@ -139,6 +165,9 @@ class Scanner:
                 return line
 
         return line
+
+    def next_line():
+        self.line = self.line + 1
 
     def has_more(self):
         return self.curr_idx < len(self.src) - 1
