@@ -102,8 +102,15 @@ class Scanner:
             else:
                 break
 
-    def identifier(char):
-        pass
+    def identifier(self):
+        start = self.curr_idx
+        while self.has_next() and is_alphanumeric(self.peek()):
+            char = self.consume()
+
+        end = self.curr_idx
+        substr = self.src[start:end + 1]
+
+        return substr
 
     def string(self):
         start = self.curr_idx
@@ -132,12 +139,14 @@ class Scanner:
         """
         start = self.curr_idx
 
-        # consume number chunk
+        # consume uninterrupted series of digits
         self.consume_number()
 
         # if is dot and has number after it
         if is_dot(self.peek()) and is_digit(self.peek(2)):
+            # eat dot
             self.consume()
+            # eat the digits that come after
             self.consume_number()
 
         end = self.curr_idx
