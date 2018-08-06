@@ -2,15 +2,14 @@ import os
 from grammar import Grammar
 import shutil
 
-PARENT_CLASS_TEMPLATE = '''
-class %s():
+PARENT_CLASS_TEMPLATE = '''class %s():
     pass
 '''
 
-INHERITED_CLASS_TEMPLATE = '''
-from %s import %s
+INHERITED_CLASS_TEMPLATE = '''from .%s import %s
+
 class %s(%s):
-    def __init__(%s):
+    def __init__(self, %s):
 %s
 '''
 
@@ -56,7 +55,7 @@ def gen_grammar(grammar):
             print(" %s" % rule_name)
             filename = "%s.py" % rule_name
             params = [p.split()[1] for p in rule_params]
-            params_init = ["\t\t\tself.%s = %s" % (p, p) for p in params]
+            params_init = ["      self.%s = %s" % (p, p) for p in params]
             data = (parent_class, parent_class, rule_name, parent_class,
                     ', '.join(params), '\n'.join(params_init))
 
