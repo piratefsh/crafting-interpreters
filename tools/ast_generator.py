@@ -5,13 +5,11 @@ from grammar import Grammar
 import shutil
 
 PARENT_CLASS_TEMPLATE = '''class %s():
-
     def accept(visitor):
         return
-
 '''
 
-INHERITED_CLASS_TEMPLATE = '''from .%s import %s
+INHERITED_CLASS_TEMPLATE = '''
 
 class %s(%s):
     def __init__(self, %s):
@@ -57,7 +55,7 @@ def gen_grammar(grammar):
         parent_class = ruleset['name']
         filename = "%s.py" % parent_class
         ruleset_dirname = "%s" % parent_class
-        ruleset_path = os.path.join(ROOT_DIR, ruleset_dirname)
+        ruleset_path = ROOT_DIR
         parent_filepath = os.path.join(ruleset_path, filename)
         visitor_filepath = os.path.join(ruleset_path, "Visitor.py")
 
@@ -65,30 +63,27 @@ def gen_grammar(grammar):
         if not os.path.exists(ruleset_path):
             os.mkdir(ruleset_path)
 
-        # make parent class file
         with open(parent_filepath, 'w') as f:
+            # make parent class file
             f.write(PARENT_CLASS_TEMPLATE % parent_class)
 
-        # make visitor class file
-        with open(visitor_filepath, 'w') as f:
+            # make visitor class file
             f.write(gen_visitor_superclass(ruleset['rules'], parent_class))
 
-        # make parent dir a module
-        with open(os.path.join(ruleset_path, '__init__.py'), 'w') as f:
-            f.write('#make module')
 
-        # make rules
-        for rule_name, rule_params in ruleset['rules'].items():
-            print(" %s" % rule_name)
-            filename = "%s.py" % rule_name
-            params = [p.split()[1] for p in rule_params]
-            params_init = ["        self.%s = %s" % (p, p) for p in params]
-            data = (parent_class, parent_class, rule_name, parent_class,
-                    ', '.join(params), '\n'.join(params_init), rule_name + parent_class)
+            # make rules
+            for rule_name, rule_params in ruleset['rules'].items():
+                print(" %s" % rule_name)
+                # filename = "%s.py" % rule_name
+                params = [p.split()[1] for p in rule_params]
+                params_init = ["        self.%s = %s" % (p, p) for p in params]
+                classname = rule_name + parent_class
+                data = (classname, parent_class, ', '.join(params),
+                    '\n'.join(params_init), rule_name + parent_class)
 
-            filepath = os.path.join(ruleset_path, filename)
-            with open(filepath, 'w') as f:
+                filepath = os.path.join(ruleset_path, filename)
                 f.write(INHERITED_CLASS_TEMPLATE % data)
+
 
 
 def main():
