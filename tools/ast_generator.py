@@ -1,9 +1,14 @@
+#!/usr/local/bin/python3
+
 import os
 from grammar import Grammar
 import shutil
 
 PARENT_CLASS_TEMPLATE = '''class %s():
-    pass
+
+    def accept(visitor):
+        return
+
 '''
 
 INHERITED_CLASS_TEMPLATE = '''from .%s import %s
@@ -11,6 +16,16 @@ INHERITED_CLASS_TEMPLATE = '''from .%s import %s
 class %s(%s):
     def __init__(self, %s):
 %s
+    def accept(visitor):
+        visitor.visit%s()
+'''
+
+VISITOR_TEMPLATE='''
+class Visitor():
+    def __init__(self):
+        pass
+
+    %s
 '''
 
 ROOT_DIR = "./ast"
@@ -20,6 +35,13 @@ def clean():
     if os.path.exists(ROOT_DIR):
         shutil.rmtree(ROOT_DIR)
 
+def gen_visitor_superclass(rules, parent_type):
+    visit_types = [ \
+        'def visit%s%s():\n        return' % (name, parent_type) \
+        for name, _ in rules.items()]
+
+    return VISITOR_TEMPLATE % "\n\n    ".join(visit_types)
+
 
 def gen_grammar(grammar):
     # make directory for ruleset
@@ -27,7 +49,7 @@ def gen_grammar(grammar):
         os.mkdir(ROOT_DIR)
     # add __init__.py to ROOT_DIR
     with open(os.path.join(ROOT_DIR, '__init__.py'), 'w') as f:
-        f.write('#make module') 
+        f.write('#make module')
 
     for ruleset in grammar:
         print(ruleset['name'])
@@ -36,28 +58,33 @@ def gen_grammar(grammar):
         filename = "%s.py" % parent_class
         ruleset_dirname = "%s" % parent_class
         ruleset_path = os.path.join(ROOT_DIR, ruleset_dirname)
-        filepath = os.path.join(ruleset_path, filename)
+        parent_filepath = os.path.join(ruleset_path, filename)
+        visitor_filepath = os.path.join(ruleset_path, "Visitor.py")
 
 
         if not os.path.exists(ruleset_path):
             os.mkdir(ruleset_path)
 
         # make parent class file
-        with open(filepath, 'w') as f:
+        with open(parent_filepath, 'w') as f:
             f.write(PARENT_CLASS_TEMPLATE % parent_class)
+
+        # make visitor class file
+        with open(visitor_filepath, 'w') as f:
+            f.write(gen_visitor_superclass(ruleset['rules'], parent_class))
 
         # make parent dir a module
         with open(os.path.join(ruleset_path, '__init__.py'), 'w') as f:
-            f.write('#make module') 
+            f.write('#make module')
 
         # make rules
         for rule_name, rule_params in ruleset['rules'].items():
             print(" %s" % rule_name)
             filename = "%s.py" % rule_name
             params = [p.split()[1] for p in rule_params]
-            params_init = ["      self.%s = %s" % (p, p) for p in params]
+            params_init = ["        self.%s = %s" % (p, p) for p in params]
             data = (parent_class, parent_class, rule_name, parent_class,
-                    ', '.join(params), '\n'.join(params_init))
+                    ', '.join(params), '\n'.join(params_init), rule_name + parent_class)
 
             filepath = os.path.join(ruleset_path, filename)
             with open(filepath, 'w') as f:

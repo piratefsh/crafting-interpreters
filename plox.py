@@ -2,6 +2,7 @@
 import sys
 from Lox import Lox
 
+
 def main():
     args = sys.argv[1:]
     if len(args) > 1:

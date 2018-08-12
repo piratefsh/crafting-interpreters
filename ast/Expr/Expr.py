@@ -1,2 +1,5 @@
 class Expr():
-    pass
+
+    def accept(visitor):
+        return
+
