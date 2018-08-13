@@ -14,8 +14,8 @@ INHERITED_CLASS_TEMPLATE = '''
 class %s(%s):
     def __init__(self, %s):
 %s
-    def accept(visitor):
-        visitor.visit%s()
+    def accept(self, visitor):
+        return visitor.visit%s(self)
 '''
 
 VISITOR_TEMPLATE='''
@@ -35,7 +35,7 @@ def clean():
 
 def gen_visitor_superclass(rules, parent_type):
     visit_types = [ \
-        'def visit%s%s():\n        return' % (name, parent_type) \
+        'def visit%s%s(%s):\n        return' % (name, parent_type, parent_type.lower()) \
         for name, _ in rules.items()]
 
     return VISITOR_TEMPLATE % "\n\n    ".join(visit_types)
@@ -77,7 +77,7 @@ def gen_grammar(grammar):
                 # filename = "%s.py" % rule_name
                 params = [p.split()[1] for p in rule_params]
                 params_init = ["        self.%s = %s" % (p, p) for p in params]
-                classname = rule_name + parent_class
+                classname = rule_name
                 data = (classname, parent_class, ', '.join(params),
                     '\n'.join(params_init), rule_name + parent_class)
 

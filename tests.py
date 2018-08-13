@@ -5,19 +5,38 @@ from TokenTypes import TokenTypes
 from Token import Token
 from os import environ
 from Lox import Lox
-
+from tools.ast_printer import Printer
+import ast.Expr as Expr
 def scan(src):
     l = Lox()
     s = Scanner(src, l)
     s.scan()
     return s
 
-
 def b():
     breakpoint()
 
+def test_ast():
+    expression = Expr.Binary(
+        Expr.Unary(
+            Token(type=TokenTypes.MINUS, lexeme="-", literal=None, line_number=1),
+            Expr.Literal(123)),
+        Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=1),
+        Expr.Grouping(
+            Expr.Literal(45.67)))
 
-def run():
+    p = Printer()
+    assert(p.print(Expr.Literal(45.67)) == '45.67')
+    assert(p.print(Expr.Unary(
+            Token(type=TokenTypes.MINUS, lexeme="-", literal=None, line_number=1),
+            Expr.Literal(123))) == '(- 123)')
+    assert(p.print(Expr.Binary(
+        Expr.Literal('1'),
+        Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=1),
+        Expr.Grouping(Expr.Literal('2')))) == "(* 1 (group 2))")
+    assert(p.print(expression) == "(* (- 123) (group 45.67))")
+
+def test_token():
     assert(scan('()').tokens == [Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
                                  Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0)])
 
@@ -135,6 +154,10 @@ def"''').tokens == [
       Token(type=TokenTypes.SEMICOLON, lexeme=';', literal=None, line_number=0), 
       Token(type=TokenTypes.RIGHT_BRACE, lexeme='}', literal=None, line_number=0)
     ])
+
+def run():
+    test_token()
+    test_ast()
     print('tests pass')
 
 

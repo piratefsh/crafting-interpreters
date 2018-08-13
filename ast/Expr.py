@@ -6,45 +6,45 @@ class Visitor():
     def __init__(self):
         pass
 
-    def visitBinaryExpr():
+    def visitBinaryExpr(expr):
         return
 
-    def visitGroupingExpr():
+    def visitGroupingExpr(expr):
         return
 
-    def visitLiteralExpr():
+    def visitLiteralExpr(expr):
         return
 
-    def visitUnaryExpr():
+    def visitUnaryExpr(expr):
         return
 
 
-class BinaryExpr(Expr):
+class Binary(Expr):
     def __init__(self, left, operator, right):
         self.left = left
         self.operator = operator
         self.right = right
-    def accept(visitor):
-        visitor.visitBinaryExpr()
+    def accept(self, visitor):
+        return visitor.visitBinaryExpr(self)
 
 
-class GroupingExpr(Expr):
+class Grouping(Expr):
     def __init__(self, expression):
         self.expression = expression
-    def accept(visitor):
-        visitor.visitGroupingExpr()
+    def accept(self, visitor):
+        return visitor.visitGroupingExpr(self)
 
 
-class LiteralExpr(Expr):
+class Literal(Expr):
     def __init__(self, value):
         self.value = value
-    def accept(visitor):
-        visitor.visitLiteralExpr()
+    def accept(self, visitor):
+        return visitor.visitLiteralExpr(self)
 
 
-class UnaryExpr(Expr):
+class Unary(Expr):
     def __init__(self, operator, right):
         self.operator = operator
         self.right = right
-    def accept(visitor):
-        visitor.visitUnaryExpr()
+    def accept(self, visitor):
+        return visitor.visitUnaryExpr(self)
