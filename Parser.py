@@ -2,6 +2,16 @@
 from TokenTypes import TokenTypes
 import ast.Expr as Expr
 
+# expression     → comma ;
+# comma          → expression ( "," expression )* ;
+# equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+# comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
+# addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
+# multiplication → unary ( ( "/" | "*" ) unary )* ;
+# unary          → ( "!" | "-" ) unary
+#                | primary ;
+# primary        → NUMBER | STRING | "false" | "true" | "nil"
+#                | "(" expression ")" ;
 
 class Parser():
     def __init__(self, tokens, lox_instance):
@@ -10,10 +20,24 @@ class Parser():
         self.lox = lox_instance
 
     def parse(self):
+        # if have parsed before
+        if self.is_at_end():
+          self.curr_idx = 0
         return self.expression()
 
+
     def expression(self):
-        return self.equality()
+        return self.comma()
+
+    def comma(self):
+        expr = self.equality()
+
+        while(self.match(TokenTypes.COMMA)):
+          operator = self.previous()
+          right = self.equality()
+          expr = Expr.Binary(expr, operator, right)
+
+        return expr
 
     def equality(self):
         expr = self.comparison()
@@ -72,7 +96,6 @@ class Parser():
         return expr
 
     def primary(self):
-        breakpoint()
         if(self.match(TokenTypes.FALSE,
                       TokenTypes.TRUE,
                       TokenTypes.NIL,

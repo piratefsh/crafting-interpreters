@@ -27,7 +27,6 @@ def assert_exception(call, expected_message):
 def test_parser():
     l = Lox()
     printer = Printer()
-
     parserE = Parser([
         Token(type=TokenTypes.BANG_EQUAL, lexeme='!=',
               literal=None, line_number=0)
@@ -44,7 +43,7 @@ def test_parser():
         Token(type=TokenTypes.FALSE, lexeme='false',
               literal=False, line_number=0)
     ], l)
-    assert(printer.print(parser.expression()) == '(!= True False)')
+    assert(printer.print(parser.parse()) == '(!= True False)')
 
     parser = Parser([
         Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
@@ -62,7 +61,7 @@ def test_parser():
               literal=None, line_number=0),
     ], l)
     # 2 * (3 + 5)
-    assert(printer.print(parser.expression()) == '(group 5)')
+    assert(printer.print(parser.parse()) == '(group 5)')
 
     parser = Parser([
         Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
@@ -77,7 +76,7 @@ def test_parser():
     ], l)
     # 2 * (3 + 5)
 
-    assert(printer.print(parser.expression()) == '(* 2 (group (+ 3 5)))')
+    assert(printer.print(parser.parse()) == '(* 2 (group (+ 3 5)))')
 
     parser = Parser([
         Token(type=TokenTypes.TRUE, lexeme='true',
@@ -96,7 +95,7 @@ def test_parser():
         Token(type=TokenTypes.NUMBER, lexeme='8', literal=8, line_number=0),
     ], l)
     # True == (3 + 5) >= 8
-    assert(printer.print(parser.expression()) ==
+    assert(printer.print(parser.parse()) ==
            '(== True (>= (group (+ 3 5)) 8))')
 
     parser = Parser([
@@ -106,7 +105,7 @@ def test_parser():
     ], l)
 
     # (5 unbalanced paren
-    assert_exception(lambda: printer.print(parser.expression()),
+    assert_exception(lambda: printer.print(parser.parse()),
                      '[LOX ERROR] line 0: Expected `)` token')
 
     # ** Unexpected token
@@ -115,6 +114,18 @@ def test_parser():
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
         ], l).expression()),
                      '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
+    parser = Parser([
+        Token(type=TokenTypes.NUMBER, lexeme='12', literal=12, line_number=0),
+        Token(type=TokenTypes.SLASH, lexeme='/', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='9', literal=9, line_number=0),
+        Token(type=TokenTypes.COMMA, lexeme=',', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+        Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
+        ], l)
+    # 12/9, 3+5
+    assert(printer.print(parser.parse()) ==
+           '(, (/ 12 9) (+ 3 2))')
 
 
 def test_ast():
