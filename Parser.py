@@ -1,13 +1,16 @@
 # Recursive descent parser
 from TokenTypes import TokenTypes
-from Lox import Lox
 import ast.Expr as Expr
 
 
 class Parser():
-    def __init__(self, tokens):
+    def __init__(self, tokens, lox_instance):
         self.tokens = tokens
         self.curr_idx = 0
+        self.lox = lox_instance
+
+    def parse(self):
+        return self.expression()
 
     def expression(self):
         return self.equality()
@@ -82,6 +85,9 @@ class Parser():
             self.consume(TokenTypes.RIGHT_PAREN)
             return Expr.Grouping(expr)
 
+        token = self.previous()
+        self.lox.error(token.line_number, 'Unexpected token {}:`{}`'.format(token.type, token.lexeme))
+
     #  return true and advance if next token is one of types
     def match(self, *types):
         for t in types:
@@ -113,5 +119,5 @@ class Parser():
         if self.check(ttype):
             self.match(ttype)
         else:
-            Lox.error(self.previous().line_number,
+            self.lox.error(self.previous().line_number,
                       'Expected `%s` token' % ttype.value)

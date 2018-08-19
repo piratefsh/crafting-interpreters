@@ -1,6 +1,8 @@
 import sys
 from os import path
 from Scanner import Scanner
+from Parser import Parser
+from tools.ast_printer import Printer
 
 class Lox():
     def __init__(self):
@@ -8,9 +10,11 @@ class Lox():
 
     def run(self, src):
         print("echo %s" % src)
-        sc = Scanner(src, self)
-        sc.scan()
-        print("parsed %s" % sc.tokens)
+        scanner = Scanner(src, self)
+        parser = Parser(scanner.scan(), self)
+        printer = Printer()
+        print("parsed: %s" % printer.print(parser.parse()))
+
         if self.had_error:
             exit(1)
 

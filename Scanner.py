@@ -150,7 +150,7 @@ class Scanner:
 
         # did not find end of string
         if not self.has_next():
-            Lox.error(self.line, "Unterminated string")
+            self.lox.error(self.line, "Unterminated string")
 
         # consume closing quote
         self.consume()
@@ -223,3 +223,4 @@ class Scanner:
     def scan(self):
         while(self.has_next()):
             self.scan_token()
+        return self.tokens

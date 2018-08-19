@@ -25,12 +25,13 @@ def assert_exception(call, expected_message):
 
 
 def test_parser():
+    l = Lox()
     printer = Printer()
 
     parserE = Parser([
         Token(type=TokenTypes.BANG_EQUAL, lexeme='!=',
               literal=None, line_number=0)
-    ])
+    ], l)
 
     assert(parserE.check(TokenTypes.BANG_EQUAL) == True)
     assert(parserE.match(TokenTypes.BANG_EQUAL) == True)
@@ -42,7 +43,7 @@ def test_parser():
               literal=None, line_number=0),
         Token(type=TokenTypes.FALSE, lexeme='false',
               literal=False, line_number=0)
-    ])
+    ], l)
     assert(printer.print(parser.expression()) == '(!= True False)')
 
     parser = Parser([
@@ -51,7 +52,7 @@ def test_parser():
         Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
         Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
-    ])
+    ], l)
 
     parser = Parser([
         Token(type=TokenTypes.LEFT_PAREN,
@@ -59,7 +60,7 @@ def test_parser():
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
         Token(type=TokenTypes.RIGHT_PAREN, lexeme=')',
               literal=None, line_number=0),
-    ])
+    ], l)
     # 2 * (3 + 5)
     assert(printer.print(parser.expression()) == '(group 5)')
 
@@ -73,7 +74,7 @@ def test_parser():
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
         Token(type=TokenTypes.RIGHT_PAREN, lexeme=')',
               literal=None, line_number=0),
-    ])
+    ], l)
     # 2 * (3 + 5)
 
     assert(printer.print(parser.expression()) == '(* 2 (group (+ 3 5)))')
@@ -93,7 +94,7 @@ def test_parser():
         Token(type=TokenTypes.GREATER_EQUAL,
               lexeme='>=', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='8', literal=8, line_number=0),
-    ])
+    ], l)
     # True == (3 + 5) >= 8
     assert(printer.print(parser.expression()) ==
            '(== True (>= (group (+ 3 5)) 8))')
@@ -102,11 +103,18 @@ def test_parser():
         Token(type=TokenTypes.LEFT_PAREN,
               lexeme='(', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
-    ])
-    # (5 unbalanced paren
+    ], l)
 
+    # (5 unbalanced paren
     assert_exception(lambda: printer.print(parser.expression()),
                      '[LOX ERROR] line 0: Expected `)` token')
+
+    # ** Unexpected token
+    assert_exception(lambda: printer.print(Parser([
+        Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
+        Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
+        ], l).expression()),
+                     '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR:`*`')
 
 
 def test_ast():
