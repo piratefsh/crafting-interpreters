@@ -121,3 +121,26 @@ class Parser():
         else:
             self.lox.error(self.previous().line_number,
                       'Expected `%s` token' % ttype.value)
+
+    # discard tokens until start of a new statement
+    def synchronize(self):
+      advance()
+
+      while(not self.is_at_end()):
+        # if just ended a statement
+        if self.previous().type == TokenTypes.SEMICOLON:
+          return
+
+        # if starting a new statement
+        ttype = self.peek().type
+        if ttype == TokenTypes.CLASS or \
+          ttype == TokenTypes.FUN or \
+          ttype == TokenTypes.VAR or \
+          ttype == TokenTypes.FOR or \
+          ttype == TokenTypes.IF or \
+          ttype == TokenTypes.WHILE or \
+          ttype == TokenTypes.PRINT or \
+          ttype == TokenTypes.RETURN:
+          return
+
+        self.advance()
