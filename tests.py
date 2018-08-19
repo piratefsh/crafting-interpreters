@@ -88,7 +88,7 @@ def test_parser():
     # (5 unbalanced paren
 
     assert_exception(lambda: printer.print(parser.expression()),
-        '[LOX ERROR] line 0: Expected TokenTypes.RIGHT_PAREN token')
+        '[LOX ERROR] line 0: Expected `)` token')
 
 def test_ast():
     expression = Expr.Binary(

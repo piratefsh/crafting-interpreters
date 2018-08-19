@@ -113,4 +113,4 @@ class Parser():
     if self.check(ttype):
       self.match(ttype)
     else:
-      Lox.error(self.previous().line_number, 'Expected %s token'% ttype)
+      Lox.error(self.previous().line_number, 'Expected `%s` token'% ttype.value)
