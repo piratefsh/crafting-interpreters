@@ -7,6 +7,8 @@ from os import environ
 from Lox import Lox
 from tools.ast_printer import Printer
 import ast.Expr as Expr
+from Parser import Parser
+
 def scan(src):
     l = Lox()
     s = Scanner(src, l)
@@ -15,6 +17,51 @@ def scan(src):
 
 def b():
     breakpoint()
+
+def test_parser():
+    printer = Printer()
+
+    parserE = Parser([
+        Token(type=TokenTypes.BANG_EQUAL, lexeme='!=', literal=None, line_number=0)
+        ])
+
+    assert(parserE.check(TokenTypes.BANG_EQUAL) == True)
+    assert(parserE.match(TokenTypes.BANG_EQUAL) == True)
+
+    parser = Parser([
+        Token(type=TokenTypes.TRUE, lexeme='true', literal=True, line_number=0),
+        Token(type=TokenTypes.BANG_EQUAL, lexeme='!=', literal=None, line_number=0),
+        Token(type=TokenTypes.FALSE, lexeme='false', literal=False, line_number=0)
+    ])
+    assert(printer.print(parser.expression()) == '(!= True False)')
+
+    parser = Parser([
+        Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
+        Token(type=TokenTypes.STAR, lexeme='*', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+        Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
+    ])
+
+    parser = Parser([
+        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
+    ])
+    # 2 * (3 + 5)
+    assert(printer.print(parser.expression()) == '(group 5)')
+
+    parser = Parser([
+        Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
+        Token(type=TokenTypes.STAR, lexeme='*', literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+        Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
+    ])
+    # 2 * (3 + 5)
+    assert(printer.print(parser.expression()) == '(* 2 (group (+ 3 5)))')
 
 def test_ast():
     expression = Expr.Binary(
@@ -34,6 +81,11 @@ def test_ast():
         Expr.Literal('1'),
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=1),
         Expr.Grouping(Expr.Literal('2')))) == "(* 1 (group 2))")
+
+    assert(p.print(Expr.Binary(
+        Expr.Literal(True),
+        Token(type=TokenTypes.EQUAL_EQUAL, lexeme="==", literal=None, line_number=1),
+        Expr.Literal(False))) == '(== True False)')
     assert(p.print(expression) == "(* (- 123) (group 45.67))")
 
 def test_token():
@@ -158,6 +210,7 @@ def"''').tokens == [
 def run():
     test_token()
     test_ast()
+    test_parser()
     print('tests pass')
 
 

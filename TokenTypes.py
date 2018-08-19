@@ -17,9 +17,11 @@ class TokenTypes(Enum):
 
     # // One or two character tokens.
     BANG = "!"
-    BANG_EQUAL = "!="
     EQUAL = "="
+
+    BANG_EQUAL = "!="
     EQUAL_EQUAL = "=="
+
     GREATER = ">"
     GREATER_EQUAL = ">="
     LESS = "<"

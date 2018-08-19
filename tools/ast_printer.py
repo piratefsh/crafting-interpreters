@@ -9,7 +9,6 @@ class Printer(Visitor):
         return expr.accept(self)
 
     def paren(self, *expressions):
-        breakpoint()
         tokens = " ".join([self.print(expr) if isinstance(expr, Expr) else str(expr) for expr in expressions])
         return "({})".format(tokens)
 
