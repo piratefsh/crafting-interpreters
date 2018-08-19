@@ -86,7 +86,7 @@ class Parser():
             return Expr.Grouping(expr)
 
         token = self.previous()
-        self.lox.error(token.line_number, 'Unexpected token {}:`{}`'.format(token.type, token.lexeme))
+        self.lox.error(token.line_number, 'Unexpected token {}: `{}`'.format(token.type, token.lexeme))
 
     #  return true and advance if next token is one of types
     def match(self, *types):

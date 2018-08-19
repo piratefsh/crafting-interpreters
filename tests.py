@@ -114,7 +114,7 @@ def test_parser():
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
         ], l).expression()),
-                     '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR:`*`')
+                     '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
 
 
 def test_ast():
