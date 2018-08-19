@@ -9,11 +9,13 @@ from tools.ast_printer import Printer
 import ast.Expr as Expr
 from Parser import Parser
 
+
 def scan(src):
     l = Lox()
     s = Scanner(src, l)
     s.scan()
     return s
+
 
 def assert_exception(call, expected_message):
     try:
@@ -21,20 +23,25 @@ def assert_exception(call, expected_message):
     except Exception as e:
         assert(str(e) == expected_message)
 
+
 def test_parser():
     printer = Printer()
 
     parserE = Parser([
-        Token(type=TokenTypes.BANG_EQUAL, lexeme='!=', literal=None, line_number=0)
-        ])
+        Token(type=TokenTypes.BANG_EQUAL, lexeme='!=',
+              literal=None, line_number=0)
+    ])
 
     assert(parserE.check(TokenTypes.BANG_EQUAL) == True)
     assert(parserE.match(TokenTypes.BANG_EQUAL) == True)
 
     parser = Parser([
-        Token(type=TokenTypes.TRUE, lexeme='true', literal=True, line_number=0),
-        Token(type=TokenTypes.BANG_EQUAL, lexeme='!=', literal=None, line_number=0),
-        Token(type=TokenTypes.FALSE, lexeme='false', literal=False, line_number=0)
+        Token(type=TokenTypes.TRUE, lexeme='true',
+              literal=True, line_number=0),
+        Token(type=TokenTypes.BANG_EQUAL, lexeme='!=',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.FALSE, lexeme='false',
+              literal=False, line_number=0)
     ])
     assert(printer.print(parser.expression()) == '(!= True False)')
 
@@ -47,9 +54,11 @@ def test_parser():
     ])
 
     parser = Parser([
-        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN,
+              lexeme='(', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
-        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')',
+              literal=None, line_number=0),
     ])
     # 2 * (3 + 5)
     assert(printer.print(parser.expression()) == '(group 5)')
@@ -57,43 +66,54 @@ def test_parser():
     parser = Parser([
         Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
         Token(type=TokenTypes.STAR, lexeme='*', literal=None, line_number=0),
-        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN,
+              lexeme='(', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
         Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
-        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')',
+              literal=None, line_number=0),
     ])
     # 2 * (3 + 5)
 
     assert(printer.print(parser.expression()) == '(* 2 (group (+ 3 5)))')
 
     parser = Parser([
-        Token(type=TokenTypes.TRUE, lexeme='true', literal=True, line_number=0),
-        Token(type=TokenTypes.EQUAL_EQUAL, lexeme='==', literal=None, line_number=0),
-        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.TRUE, lexeme='true',
+              literal=True, line_number=0),
+        Token(type=TokenTypes.EQUAL_EQUAL, lexeme='==',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN,
+              lexeme='(', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
         Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
-        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
-        Token(type=TokenTypes.GREATER_EQUAL, lexeme='>=', literal=None, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.GREATER_EQUAL,
+              lexeme='>=', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='8', literal=8, line_number=0),
     ])
     # True == (3 + 5) >= 8
-    assert(printer.print(parser.expression()) == '(== True (>= (group (+ 3 5)) 8))')
+    assert(printer.print(parser.expression()) ==
+           '(== True (>= (group (+ 3 5)) 8))')
 
     parser = Parser([
-        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN,
+              lexeme='(', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
     ])
     # (5 unbalanced paren
 
     assert_exception(lambda: printer.print(parser.expression()),
-        '[LOX ERROR] line 0: Expected `)` token')
+                     '[LOX ERROR] line 0: Expected `)` token')
+
 
 def test_ast():
     expression = Expr.Binary(
         Expr.Unary(
-            Token(type=TokenTypes.MINUS, lexeme="-", literal=None, line_number=1),
+            Token(type=TokenTypes.MINUS, lexeme="-",
+                  literal=None, line_number=1),
             Expr.Literal(123)),
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=1),
         Expr.Grouping(
@@ -102,8 +122,8 @@ def test_ast():
     p = Printer()
     assert(p.print(Expr.Literal(45.67)) == '45.67')
     assert(p.print(Expr.Unary(
-            Token(type=TokenTypes.MINUS, lexeme="-", literal=None, line_number=1),
-            Expr.Literal(123))) == '(- 123)')
+        Token(type=TokenTypes.MINUS, lexeme="-", literal=None, line_number=1),
+        Expr.Literal(123))) == '(- 123)')
     assert(p.print(Expr.Binary(
         Expr.Literal('1'),
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=1),
@@ -111,9 +131,11 @@ def test_ast():
 
     assert(p.print(Expr.Binary(
         Expr.Literal(True),
-        Token(type=TokenTypes.EQUAL_EQUAL, lexeme="==", literal=None, line_number=1),
+        Token(type=TokenTypes.EQUAL_EQUAL, lexeme="==",
+              literal=None, line_number=1),
         Expr.Literal(False))) == '(== True False)')
     assert(p.print(expression) == "(* (- 123) (group 45.67))")
+
 
 def test_token():
     assert(scan('()').tokens == [Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
@@ -222,17 +244,27 @@ def"''').tokens == [
         Token(type=TokenTypes.FALSE, lexeme='false', literal=False, line_number=0)])
 
     assert(scan('fun x(a){return a;}').tokens == [
-      Token(type=TokenTypes.FUN, lexeme='fun', literal=None, line_number=0), 
-      Token(type=TokenTypes.IDENTIFIER, lexeme='x', literal=None, line_number=0), 
-      Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0), 
-      Token(type=TokenTypes.IDENTIFIER, lexeme='a', literal=None, line_number=0), 
-      Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0), 
-      Token(type=TokenTypes.LEFT_BRACE, lexeme='{', literal=None, line_number=0), 
-      Token(type=TokenTypes.RETURN, lexeme='return', literal=None, line_number=0), 
-      Token(type=TokenTypes.IDENTIFIER, lexeme='a', literal=None, line_number=0), 
-      Token(type=TokenTypes.SEMICOLON, lexeme=';', literal=None, line_number=0), 
-      Token(type=TokenTypes.RIGHT_BRACE, lexeme='}', literal=None, line_number=0)
+        Token(type=TokenTypes.FUN, lexeme='fun', literal=None, line_number=0),
+        Token(type=TokenTypes.IDENTIFIER, lexeme='x',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN,
+              lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.IDENTIFIER, lexeme='a',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_BRACE,
+              lexeme='{', literal=None, line_number=0),
+        Token(type=TokenTypes.RETURN, lexeme='return',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.IDENTIFIER, lexeme='a',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.SEMICOLON, lexeme=';',
+              literal=None, line_number=0),
+        Token(type=TokenTypes.RIGHT_BRACE,
+              lexeme='}', literal=None, line_number=0)
     ])
+
 
 def run():
     test_token()
