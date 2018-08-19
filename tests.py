@@ -61,7 +61,22 @@ def test_parser():
         Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
     ])
     # 2 * (3 + 5)
+
     assert(printer.print(parser.expression()) == '(* 2 (group (+ 3 5)))')
+
+    parser = Parser([
+        Token(type=TokenTypes.TRUE, lexeme='true', literal=True, line_number=0),
+        Token(type=TokenTypes.EQUAL_EQUAL, lexeme='==', literal=None, line_number=0),
+        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+        Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
+        Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
+        Token(type=TokenTypes.GREATER_EQUAL, lexeme='>=', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='8', literal=8, line_number=0),
+    ])
+    # True == (3 + 5) >= 8
+    assert(printer.print(parser.expression()) == '(== True (>= (group (+ 3 5)) 8))')
 
 def test_ast():
     expression = Expr.Binary(
