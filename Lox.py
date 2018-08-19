@@ -36,5 +36,5 @@ class Lox():
 
     @staticmethod
     def report(line_num, message):
-        sys.stderr.write('[LOX ERROR] line %s: %s' %
+        raise Exception('[LOX ERROR] line %s: %s' %
                          (str(line_num), str(message)))

@@ -1,5 +1,6 @@
 # Recursive descent parser
 from TokenTypes import TokenTypes
+from Lox import Lox
 import ast.Expr as Expr
 
 class Parser():
@@ -112,4 +113,4 @@ class Parser():
     if self.check(ttype):
       self.match(ttype)
     else:
-      raise SyntaxError('Expected %s token'% ttype)
+      Lox.error(self.previous().line_number, 'Expected %s token'% ttype)

@@ -15,8 +15,11 @@ def scan(src):
     s.scan()
     return s
 
-def b():
-    breakpoint()
+def assert_exception(call, expected_message):
+    try:
+        call()
+    except Exception as e:
+        assert(str(e) == expected_message)
 
 def test_parser():
     printer = Printer()
@@ -77,6 +80,15 @@ def test_parser():
     ])
     # True == (3 + 5) >= 8
     assert(printer.print(parser.expression()) == '(== True (>= (group (+ 3 5)) 8))')
+
+    parser = Parser([
+        Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='5', literal=5, line_number=0),
+    ])
+    # (5 unbalanced paren
+
+    assert_exception(lambda: printer.print(parser.expression()),
+        '[LOX ERROR] line 0: Expected TokenTypes.RIGHT_PAREN token')
 
 def test_ast():
     expression = Expr.Binary(
