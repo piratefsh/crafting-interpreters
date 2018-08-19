@@ -13,6 +13,7 @@ import ast.Expr as Expr
 # primary        → NUMBER | STRING | "false" | "true" | "nil"
 #                | "(" expression ")" ;
 
+
 class Parser():
     def __init__(self, tokens, lox_instance):
         self.tokens = tokens
@@ -22,9 +23,8 @@ class Parser():
     def parse(self):
         # if have parsed before
         if self.is_at_end():
-          self.curr_idx = 0
+            self.curr_idx = 0
         return self.expression()
-
 
     def expression(self):
         return self.comma()
@@ -33,9 +33,9 @@ class Parser():
         expr = self.equality()
 
         while(self.match(TokenTypes.COMMA)):
-          operator = self.previous()
-          right = self.equality()
-          expr = Expr.Binary(expr, operator, right)
+            operator = self.previous()
+            right = self.equality()
+            expr = Expr.Binary(expr, operator, right)
 
         return expr
 
@@ -109,7 +109,8 @@ class Parser():
             return Expr.Grouping(expr)
 
         token = self.previous()
-        self.lox.error(token.line_number, 'Unexpected token {}: `{}`'.format(token.type, token.lexeme))
+        self.lox.error(token.line_number, 'Unexpected token {}: `{}`'.format(
+            token.type, token.lexeme))
 
     #  return true and advance if next token is one of types
     def match(self, *types):
@@ -143,27 +144,27 @@ class Parser():
             self.match(ttype)
         else:
             self.lox.error(self.previous().line_number,
-                      'Expected `%s` token' % ttype.value)
+                           'Expected `%s` token' % ttype.value)
 
     # discard tokens until start of a new statement
     def synchronize(self):
-      advance()
+        advance()
 
-      while(not self.is_at_end()):
-        # if just ended a statement
-        if self.previous().type == TokenTypes.SEMICOLON:
-          return
+        while(not self.is_at_end()):
+            # if just ended a statement
+            if self.previous().type == TokenTypes.SEMICOLON:
+                return
 
-        # if starting a new statement
-        ttype = self.peek().type
-        if ttype == TokenTypes.CLASS or \
-          ttype == TokenTypes.FUN or \
-          ttype == TokenTypes.VAR or \
-          ttype == TokenTypes.FOR or \
-          ttype == TokenTypes.IF or \
-          ttype == TokenTypes.WHILE or \
-          ttype == TokenTypes.PRINT or \
-          ttype == TokenTypes.RETURN:
-          return
+            # if starting a new statement
+            ttype = self.peek().type
+            if ttype == TokenTypes.CLASS or \
+                    ttype == TokenTypes.FUN or \
+                    ttype == TokenTypes.VAR or \
+                    ttype == TokenTypes.FOR or \
+                    ttype == TokenTypes.IF or \
+                    ttype == TokenTypes.WHILE or \
+                    ttype == TokenTypes.PRINT or \
+                    ttype == TokenTypes.RETURN:
+                return
 
-        self.advance()
+            self.advance()

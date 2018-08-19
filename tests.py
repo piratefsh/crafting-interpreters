@@ -112,8 +112,8 @@ def test_parser():
     assert_exception(lambda: printer.print(Parser([
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
-        ], l).expression()),
-                     '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
+    ], l).expression()),
+        '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
     parser = Parser([
         Token(type=TokenTypes.NUMBER, lexeme='12', literal=12, line_number=0),
         Token(type=TokenTypes.SLASH, lexeme='/', literal=None, line_number=0),
@@ -122,7 +122,7 @@ def test_parser():
         Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
         Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
         Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
-        ], l)
+    ], l)
     # 12/9, 3+5
     assert(printer.print(parser.parse()) ==
            '(, (/ 12 9) (+ 3 2))')
