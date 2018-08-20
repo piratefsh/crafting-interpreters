@@ -111,6 +111,13 @@ def test_parser():
     # ** Unexpected token
     assert_exception(lambda: printer.print(Parser([
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
+    ], l).expression()),
+        '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
+
+    assert_exception(lambda: printer.print(Parser([
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+        Token(type=TokenTypes.PLUS, lexeme='+', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='2', literal=2, line_number=0),
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
     ], l).expression()),
         '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
@@ -129,7 +136,19 @@ def test_parser():
     assert(printer.print(parser.parse()) ==
            '(, (/ 12 9) (+ 3 2))')
 
-    # comma operator
+    # TODO:comma operator wth function
+    # parser = Parser([
+    #     Token(type=TokenTypes.IDENTIFIER, lexeme='foo', literal=None, line_number=0),
+    #     Token(type=TokenTypes.LEFT_PAREN, lexeme='(', literal=None, line_number=0),
+    #     Token(type=TokenTypes.NUMBER, lexeme='9', literal=9, line_number=0),
+    #     Token(type=TokenTypes.COMMA, lexeme=',', literal=None, line_number=0),
+    #     Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+    #     Token(type=TokenTypes.RIGHT_PAREN, lexeme=')', literal=None, line_number=0),
+    # ], l)
+    # assert(printer.print(parser.parse()) ==
+    #        '(foo 9 3)')
+
+    # ternary operator
     # a == b ? 0 : 1
     parser = Parser([
         Token(type=TokenTypes.NUMBER, lexeme='9', literal=9, line_number=0),

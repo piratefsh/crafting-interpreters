@@ -145,7 +145,7 @@ class Parser():
         return self.previous()
 
     def previous(self):
-        return self.tokens[self.curr_idx - 1]
+        return self.tokens[self.curr_idx - 1 if self.curr_idx > 0  else 0 ]
 
     def is_at_end(self):
         return self.curr_idx >= len(self.tokens)
