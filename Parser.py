@@ -1,9 +1,11 @@
 # Recursive descent parser
 from TokenTypes import TokenTypes
+from Token import Token
 import ast.Expr as Expr
 
 # expression     → comma ;
-# comma          → expression ( "," expression )* ;
+# comma          → ternary ( "," ternary )* ;
+# ternary        → equality "?" equality ":" equality ;
 # equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 # comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
 # addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
@@ -30,14 +32,26 @@ class Parser():
         return self.comma()
 
     def comma(self):
-        expr = self.equality()
+        expr = self.ternary()
 
         while(self.match(TokenTypes.COMMA)):
             operator = self.previous()
-            right = self.equality()
+            right = self.ternary()
             expr = Expr.Binary(expr, operator, right)
 
         return expr
+
+    def ternary(self):
+      expr = self.equality()
+
+      if(self.match(TokenTypes.QUESTION_MARK)):
+        true_expr = self.equality()
+        self.consume(TokenTypes.COLON)
+        false_expr = self.equality()
+        operator = Token(TokenTypes.ELVIS, '?:', None, None)
+        expr = Expr.Ternary(operator, expr, true_expr, false_expr)
+
+      return expr
 
     def equality(self):
         expr = self.comparison()

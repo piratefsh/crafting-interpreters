@@ -14,6 +14,9 @@ class TokenTypes(Enum):
     SEMICOLON = ";"
     SLASH = "/"
     STAR = "*"
+    QUESTION_MARK = "?"
+    COLON = ":"
+    ELVIS = "?:"
 
     # // One or two character tokens.
     BANG = "!"

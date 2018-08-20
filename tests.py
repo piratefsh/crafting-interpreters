@@ -114,6 +114,8 @@ def test_parser():
         Token(type=TokenTypes.STAR, lexeme="*", literal=None, line_number=99),
     ], l).expression()),
         '[LOX ERROR] line 99: Unexpected token TokenTypes.STAR: `*`')
+
+    # comma operator
     parser = Parser([
         Token(type=TokenTypes.NUMBER, lexeme='12', literal=12, line_number=0),
         Token(type=TokenTypes.SLASH, lexeme='/', literal=None, line_number=0),
@@ -126,6 +128,21 @@ def test_parser():
     # 12/9, 3+5
     assert(printer.print(parser.parse()) ==
            '(, (/ 12 9) (+ 3 2))')
+
+    # comma operator
+    # a == b ? 0 : 1
+    parser = Parser([
+        Token(type=TokenTypes.NUMBER, lexeme='9', literal=9, line_number=0),
+        Token(type=TokenTypes.EQUAL_EQUAL, lexeme='==', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+        Token(type=TokenTypes.QUESTION_MARK, lexeme='?', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='0', literal=0, line_number=0),
+        Token(type=TokenTypes.COLON, lexeme=':', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='1', literal=1, line_number=0),
+    ], l)
+    # 12/9, 3+5
+    assert(printer.print(parser.parse()) ==
+           '(?: (== 9 3) 0 1)')
 
 
 def test_ast():
@@ -153,6 +170,7 @@ def test_ast():
         Token(type=TokenTypes.EQUAL_EQUAL, lexeme="==",
               literal=None, line_number=1),
         Expr.Literal(False))) == '(== True False)')
+
     assert(p.print(expression) == "(* (- 123) (group 45.67))")
 
 

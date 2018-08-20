@@ -6,6 +6,9 @@ class Visitor():
     def __init__(self):
         pass
 
+    def visitTernaryExpr(expr):
+        return
+
     def visitBinaryExpr(expr):
         return
 
@@ -17,6 +20,16 @@ class Visitor():
 
     def visitUnaryExpr(expr):
         return
+
+
+class Ternary(Expr):
+    def __init__(self, operator, conditional, left, right):
+        self.operator = operator
+        self.conditional = conditional
+        self.left = left
+        self.right = right
+    def accept(self, visitor):
+        return visitor.visitTernaryExpr(self)
 
 
 class Binary(Expr):
