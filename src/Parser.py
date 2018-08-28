@@ -101,13 +101,11 @@ class Parser():
         return expr
 
     def unary(self):
-        expr = self.primary()
-
-        while(self.match(TokenTypes.BANG, TokenTypes.MINUS)):
+        if(self.match(TokenTypes.BANG, TokenTypes.MINUS)):
             operator = self.previous()
-            expr = Expr.Unary(operator, self.unary())
+            return Expr.Unary(operator, self.unary())
 
-        return expr
+        return self.primary()
 
     def primary(self):
         if(self.match(TokenTypes.FALSE,

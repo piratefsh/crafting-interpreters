@@ -166,6 +166,39 @@ def test_parser():
     assert(printer.print(parser.parse()) ==
            '(?: (== 9 3) 0 1)')
 
+    parser = Parser([
+        Token(type=TokenTypes.NUMBER, lexeme='9', literal=9, line_number=0),
+        Token(type=TokenTypes.MINUS, lexeme='-', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+    ], l)
+    assert(printer.print(parser.parse()) ==
+           '(- 9 3)')
+
+    # !0
+    parser = Parser([
+        Token(type=TokenTypes.BANG, lexeme='!', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='0', literal=0, line_number=0),
+    ], l)
+    assert(printer.print(parser.parse()) ==
+           '(! 0)')
+     # -4
+    parser = Parser([
+        Token(type=TokenTypes.MINUS, lexeme='-', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='4', literal=4, line_number=0),
+    ], l)
+    assert(printer.print(parser.parse()) ==
+           '(- 4)')
+
+   # -4 * 3
+    parser = Parser([
+        Token(type=TokenTypes.MINUS, lexeme='-', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='4', literal=4, line_number=0),
+        Token(type=TokenTypes.STAR, lexeme='*', literal=None, line_number=0),
+        Token(type=TokenTypes.NUMBER, lexeme='3', literal=3, line_number=0),
+    ], l)
+    # assert(printer.print(parser.parse()) ==
+           # '(* (- 4) 3)')
+
 
 def test_ast():
     expression = Expr.Binary(
