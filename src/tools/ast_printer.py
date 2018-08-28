@@ -1,4 +1,4 @@
-from ast.Expr import Visitor, Expr
+from ..ast.Expr import Visitor, Expr
 
 
 class Printer(Visitor):

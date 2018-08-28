@@ -1,14 +1,17 @@
 #!/usr/local/bin/python3
 
-from Scanner import Scanner
-from TokenTypes import TokenTypes
-from Token import Token
-from os import environ
-from Lox import Lox
-from tools.ast_printer import Printer
-import ast.Expr as Expr
-from Parser import Parser
+import sys
+sys.path.append('.')
 
+from os import environ
+from src.Scanner import Scanner
+from src.TokenTypes import TokenTypes
+from src.Token import Token
+from src.Lox import Lox
+from src.Parser import Parser
+
+from src.tools.ast_printer import Printer
+import src.ast.Expr as Expr
 
 def scan(src):
     l = Lox()

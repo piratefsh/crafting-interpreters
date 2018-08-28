@@ -1,7 +1,9 @@
 #!/usr/local/bin/python3
-import sys
-from Lox import Lox
 
+import sys
+sys.path.append('.')
+
+from src.Lox import Lox
 
 def main():
     args = sys.argv[1:]

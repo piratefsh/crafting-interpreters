@@ -1,7 +1,6 @@
-from TokenTypes import TokenTypes
-from Token import Token
-import pdb
-from scanner_helpers import is_digit, \
+from .TokenTypes import TokenTypes
+from .Token import Token
+from .scanner_helpers import is_digit, \
     is_dot, \
     is_nextline, \
     is_whitespace, \

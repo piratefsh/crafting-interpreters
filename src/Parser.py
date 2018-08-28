@@ -1,7 +1,7 @@
 # Recursive descent parser
-from TokenTypes import TokenTypes
-from Token import Token
-import ast.Expr as Expr
+from .TokenTypes import TokenTypes
+from .Token import Token
+from .ast import Expr
 
 # expression     → comma ;
 # comma          → ternary ( "," ternary )* ;

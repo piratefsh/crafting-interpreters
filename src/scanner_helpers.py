@@ -1,5 +1,5 @@
-from TokenTypes import TokenTypes
-from TokenKeywords import TokenKeywords
+from .TokenTypes import TokenTypes
+from .TokenKeywords import TokenKeywords
 
 
 def is_digit(c):

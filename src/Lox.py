@@ -1,8 +1,7 @@
-import sys
 from os import path
-from Scanner import Scanner
-from Parser import Parser
-from tools.ast_printer import Printer
+from .Scanner import Scanner
+from .Parser import Parser
+from .tools.ast_printer import Printer
 
 class Lox():
     def __init__(self):

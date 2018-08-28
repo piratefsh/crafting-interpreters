@@ -1,4 +1,4 @@
-from TokenTypes import TokenTypes
+from .TokenTypes import TokenTypes
 
 # Map of keyword to its TokenType
 TokenKeywords = {
